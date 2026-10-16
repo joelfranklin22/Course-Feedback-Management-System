@@ -8,13 +8,29 @@ import mediaIcon from "./Image/media.svg";
 import icon_py from "./Image/icon-py.png";
 import cliIcon from "./Image/cli.png";
 import RegistrationForm from "./Register";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { enrollCourse } from "./actions";
 import HeaderComponent from "./Header_Course";
 import Python_1 from "./Image/PythonCvr.webp";
+const COURSE_NAME = "PYTHON CLI APPLICATION ON LINUX";
+
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
+  const currentUser = useSelector((s) => s.users.currentUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  // logged in -> enroll and go to videos, otherwise ask to login/register
+  const handleShow = () => {
+    if (currentUser) {
+      dispatch(enrollCourse(currentUser.email, COURSE_NAME));
+      navigate("/module");
+    } else {
+      setShowModal(true);
+    }
+  };
 
   return (
     <>
@@ -245,12 +261,12 @@ const Header = () => {
           </div>
         </div>
       </section>
-      <Modal show={showModal} onHide={handleClose} size="lg" centered>
+      <Modal show={showModal} onHide={handleClose} size="md" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Register</Modal.Title>
+          <Modal.Title>Login or Register to Enroll</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <RegistrationForm course="PYTHON CLI APPLICATION ON LINUX" inModal />
+          <RegistrationForm course={COURSE_NAME} inModal />
         </Modal.Body>
       </Modal>
     </>

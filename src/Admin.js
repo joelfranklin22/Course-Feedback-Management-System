@@ -1,9 +1,23 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  List, ListItemButton, ListItemIcon, ListItemText, Drawer, CssBaseline,
-  AppBar, Toolbar, Typography, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Drawer,
+  CssBaseline,
+  AppBar,
+  Toolbar,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Home, Feedback, School, ExitToApp } from "@mui/icons-material";
@@ -11,14 +25,18 @@ import StaticFeedbackReviews from "./StaticFeedbackReviews";
 
 const drawerWidth = 240;
 
+const getCourses = (u) =>
+  u.courses || (u.course && u.course !== "Not selected" ? [u.course] : []);
+
 const Admin = () => {
   const users = useSelector((state) => state.users.users);
   const navigate = useNavigate();
   const [section, setSection] = useState("users");
 
   const courseCounts = users.reduce((acc, u) => {
-    const c = u.course || "Not selected";
-    acc[c] = (acc[c] || 0) + 1;
+    getCourses(u).forEach((c) => {
+      acc[c] = (acc[c] || 0) + 1;
+    });
     return acc;
   }, {});
 
@@ -31,9 +49,14 @@ const Admin = () => {
   return (
     <div style={{ display: "flex", minHeight: "73vh" }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: 1201, backgroundColor: "#1e1e1e" }}>
+      <AppBar
+        position="fixed"
+        sx={{ zIndex: 1201, backgroundColor: "#1e1e1e" }}
+      >
         <Toolbar>
-          <Typography variant="h6" noWrap>Admin Dashboard</Typography>
+          <Typography variant="h6" noWrap>
+            Admin Dashboard
+          </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -59,12 +82,16 @@ const Admin = () => {
               selected={section === m.key}
               onClick={() => setSection(m.key)}
             >
-              <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>{m.icon}</ListItemIcon>
+              <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>
+                {m.icon}
+              </ListItemIcon>
               <ListItemText primary={m.label} />
             </ListItemButton>
           ))}
           <ListItemButton onClick={() => navigate("/")}>
-            <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}><ExitToApp /></ListItemIcon>
+            <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>
+              <ExitToApp />
+            </ListItemIcon>
             <ListItemText primary="Logout" />
           </ListItemButton>
         </List>
@@ -89,13 +116,25 @@ const Admin = () => {
                     <TableRow key={i}>
                       <TableCell>{u.username}</TableCell>
                       <TableCell>{u.email}</TableCell>
-                      <TableCell>{u.course || "Not selected"}</TableCell>
+                      <TableCell>
+                        {getCourses(u).join(", ") || "Not enrolled"}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
-            <Box sx={{ py: 2, px: 3, textAlign: "center", bgcolor: "#1e88e5", color: "#fff", fontWeight: "bold", borderRadius: 1 }}>
+            <Box
+              sx={{
+                py: 2,
+                px: 3,
+                textAlign: "center",
+                bgcolor: "#1e88e5",
+                color: "#fff",
+                fontWeight: "bold",
+                borderRadius: 1,
+              }}
+            >
               Total Registered Users: {users.length}
             </Box>
           </>

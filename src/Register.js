@@ -4,47 +4,19 @@ import { registerUser, loginUser } from "./actions";
 import { Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import HeaderComponent from "./Header_Course";
+import LoginForm, { authCss } from "./LoginForm";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-const css = `
-  .reg-page {
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 16px;
-    background: linear-gradient(135deg, #1e1e1e 0%, #333 100%);
-  }
-  .reg-card {
-    width: 100%;
-    max-width: 440px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 32px 28px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
-  .reg-card.in-modal {
-    max-width: 100%;
-    box-shadow: none;
-    padding: 4px 8px;
-  }
-  .reg-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; text-align: center; }
-  .reg-sub { text-align: center; color: #6c757d; margin-bottom: 24px; font-size: 0.95rem; }
-  .reg-card .form-label { font-weight: 600; margin-bottom: 4px; }
-  .reg-hint { font-size: 0.8rem; color: #6c757d; margin-top: 4px; }
-  .reg-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
-  .reg-actions .btn { padding: 10px; font-weight: 600; }
-`;
-
 const RegistrationForm = ({ course, inModal = false }) => {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [mode, setMode] = useState("register");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -92,7 +64,7 @@ const RegistrationForm = ({ course, inModal = false }) => {
     setErrors(newErrors);
     if (Object.values(newErrors).some(Boolean)) return;
 
-    const user = { ...form, course: course || "Not selected" };
+    const user = { ...form, courses: course ? [course] : [] };
     dispatch(registerUser(user));
     dispatch(loginUser(user));
     setShowSuccess(true);
@@ -118,9 +90,9 @@ const RegistrationForm = ({ course, inModal = false }) => {
     </Form.Group>
   );
 
-  const card = (
+  const registerCard = (
     <div className={`reg-card ${inModal ? "in-modal" : ""}`}>
-      <style>{css}</style>
+      <style>{authCss}</style>
       <h2 className="reg-title">Create your account</h2>
       <p className="reg-sub">
         {course ? `Enrolling in ${course}` : "Register to start learning"}
@@ -179,8 +151,30 @@ const RegistrationForm = ({ course, inModal = false }) => {
           </Button>
         </div>
       </Form>
+
+      <div className="reg-switch">
+        Already registered?{" "}
+        <button
+          type="button"
+          className="btn btn-link"
+          onClick={() => setMode("login")}
+        >
+          Login
+        </button>
+      </div>
     </div>
   );
+
+  const card =
+    mode === "login" ? (
+      <LoginForm
+        course={course}
+        inModal={inModal}
+        onSwitch={() => setMode("register")}
+      />
+    ) : (
+      registerCard
+    );
 
   if (inModal) return card;
 
