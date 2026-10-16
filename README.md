@@ -1,69 +1,74 @@
-# Training Feedback Management System
+# Fluid Fusion – Course Feedback Management System
 
-A responsive web application designed to manage training courses, student enrollments, modules, and course feedback.
+A React web app where students register for courses, watch module videos and submit feedback, while the admin tracks registered users, course enrolments and feedback reviews from a dashboard.
 
-## 🚀 Features
+Built during my internship (2024).
 
-* 🏠 Home page
-* 📚 Course enrollment
-* 📝 User registration
-* 📖 Module management
-* ⭐ Course feedback submission
-* 📊 Admin dashboard
-* 👤 Registered user management
-* 📱 Responsive design
+**Live Demo:** [Add your Netlify link here]
 
-## 🛠️ Tech Stack
+## Features
 
-* React.js
-* JavaScript
-* HTML5
-* CSS3
-* Bootstrap
+- Course catalogue with course detail pages
+- Registration and login with form validation
+- Video-based learning module with Previous / Next navigation
+- Emoji-based feedback form (Worst / Better / Best) with 10 questions
+- Admin dashboard with:
+  - Registered users
+  - Feedback reviews (view each student's answers)
+  - Course enrolment count
+- Data saved in the browser using localStorage
 
-## 📂 Main Modules
+## Tech Stack
 
-* **Home** – Overview of the training platform
-* **Course Enrollment** – Users can enroll in available courses
-* **Registration** – New users can register
-* **Modules** – View and manage course modules
-* **Feedback** – Users can submit course feedback
-* **Admin Dashboard** – Manage registered users and feedback
+| Area             | Tools                                           |
+| ---------------- | ----------------------------------------------- |
+| Frontend         | React, JavaScript                               |
+| Routing          | React Router                                    |
+| State management | Redux, Context API                              |
+| UI               | React-Bootstrap, Material UI, Font Awesome, CSS |
+| Deployment       | Netlify                                         |
 
-## 🎯 Purpose
+## Demo Login
 
-This project was developed to understand and implement a practical React-based application with multiple pages, user interactions, forms, and administrative functionality.
+| Role    | Email                               | Password            |
+| ------- | ----------------------------------- | ------------------- |
+| Admin   | joel@admin.in                       | Admin1234           |
+| Student | Register a new account from the app | (your own password) |
 
-## 💻 Getting Started
+## Project Structure
 
-### Clone the repository
-
-```bash
-git clone https://github.com/joelfranklin22/training-feedback-management-system.git
+```
+src/
+├── App.js                      # Routes
+├── index.js                    # Entry point (Redux + Context providers)
+├── New.js                      # Home page sections (header, feedback cards, footer)
+├── Card.js                     # Course cards
+├── Course.js                   # Course details page
+├── Register.js                 # Registration form
+├── Header_Course.js            # Navbar + login modal
+├── Module.js                   # Video learning module
+├── Student_Feedback.js         # Feedback form
+├── Admin.js                    # Admin dashboard
+├── StaticFeedbackReviews.js    # Feedback reviews table (admin)
+├── FeedbackContext.js          # Context API for feedback
+├── store.js, actions.js, userReducer.js   # Redux setup
+└── questions.js                # Feedback questions
 ```
 
-### Install dependencies
+## Known Limitations
 
-```bash
-npm install
-```
+- Frontend-only project: data is stored in localStorage, not in a database
+- Login is a demo (checked on the client side, not secure for real use)
+- Not fully optimised for mobile screens
 
-### Start the development server
+## Future Improvements
 
-```bash
-npm run dev
-```
+- Backend with Node.js, Express and MongoDB
+- Secure authentication (JWT + password hashing)
+- Responsive design for mobile
+- Separate content for each course
+- Charts for feedback analytics in the admin dashboard
 
-The application will run on the local development server provided by Vite.
+## Author
 
-## 📸 Screenshots
-
-Add project screenshots here.
-
-## 👨‍💻 Author
-
-**Joel Franklin**
-
-BE Computer Science Graduate | Aspiring Full Stack Developer
-
-GitHub: https://github.com/joelfranklin22
+**Joel**
