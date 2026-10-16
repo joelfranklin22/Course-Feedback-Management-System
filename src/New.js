@@ -1,14 +1,12 @@
 import React from "react";
-import { Container, Row, Col, Nav } from "react-bootstrap";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import logo_1 from "./Image/Logo-white.png";
+import { Container, Row, Col } from "react-bootstrap";
 import head_2 from "./Image/head-2.png";
 import logo_2 from "./Image/quote-img.svg";
 import Person1 from "./Image/Person-1.png";
 import Person2 from "./Image/Person-2.png";
 import Person3 from "./Image/Person-3.png";
 import "bootstrap/dist/css/bootstrap.min.css";
-import HeaderComponent from "./Header_Course"; 
+import HeaderComponent from "./Header_Course";
 
 const Header = () => {
   return (
@@ -19,10 +17,10 @@ const Header = () => {
           <Container fluid className="position-relative">
             <div className="overlay-content text-center">
               <div className="left-image mt-5">
-                <img src={head_2} alt="Left Side Image" />
+                <img src={head_2} alt="Left side illustration" />
               </div>
               <div className="quote-img">
-                <img src={logo_2} alt="Quote Image" className="quote-logo" />
+                <img src={logo_2} alt="Quotation mark" className="quote-logo" />
               </div>
               <div className="quote mt-5 text-light">
                 <p>
@@ -218,4 +216,3 @@ const Footer = () => {
 };
 
 export { AboutUs, CourseFeedback, Footer };
-
