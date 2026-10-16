@@ -1,51 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  List,
-  ListItem,
-  ListItemText,
-  Drawer,
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-  IconButton,
+  List, ListItemButton, ListItemIcon, ListItemText, Drawer, CssBaseline,
+  AppBar, Toolbar, Typography, Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Paper, Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Home, Feedback, School, ExitToApp } from "@mui/icons-material"; // Import icons
+import { Home, Feedback, School, ExitToApp } from "@mui/icons-material";
+import StaticFeedbackReviews from "./StaticFeedbackReviews";
 
 const drawerWidth = 240;
-const appBarHeight = 60; // Set the desired height for the AppBar
 
 const Admin = () => {
   const users = useSelector((state) => state.users.users);
   const navigate = useNavigate();
+  const [section, setSection] = useState("users");
+
+  const courseCounts = users.reduce((acc, u) => {
+    const c = u.course || "Not selected";
+    acc[c] = (acc[c] || 0) + 1;
+    return acc;
+  }, {});
+
+  const menu = [
+    { key: "users", label: "Registered Users", icon: <Home /> },
+    { key: "feedback", label: "Feedback Reviews", icon: <Feedback /> },
+    { key: "courses", label: "Course Enrolled", icon: <School /> },
+  ];
 
   return (
-    <div
-      style={{ display: "flex", minHeight: "73vh", flexDirection: "column" }}
-    >
+    <div style={{ display: "flex", minHeight: "73vh" }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        style={{
-          zIndex: 1201,
-          height: appBarHeight,
-          backgroundColor: "#1e1e1e", // Dark background color for the AppBar
-        }}
-      >
+      <AppBar position="fixed" sx={{ zIndex: 1201, backgroundColor: "#1e1e1e" }}>
         <Toolbar>
-          <Typography variant="h6" noWrap>
-            Admin Dashboard
-          </Typography>
+          <Typography variant="h6" noWrap>Admin Dashboard</Typography>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -53,85 +41,89 @@ const Admin = () => {
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
-            maxHeight: "575px", // Max height for the Drawer
-            overflowY: "auto", // Ensure overflow is handled if content exceeds maxHeight
-            backgroundColor: "#333", // Dark background color for the Drawer
-            color: "#fff", // Light text color for contrast
+            maxHeight: "575px",
+            overflowY: "auto",
+            backgroundColor: "#333",
+            color: "#fff",
           },
         }}
       >
         <Toolbar />
         <List>
-          <ListItem button onClick={() => navigate("/admin/registered-users")}>
-            <Home sx={{ mr: 2 }} /> {/* Icon for Registered Users */}
-            <ListItemText primary="Registered Users" />
-          </ListItem>
-          <ListItem button onClick={() => navigate("/admin")}>
-            <Feedback sx={{ mr: 2 }} /> {/* Icon for Feedback Reviews */}
-            <ListItemText primary="Feedback Reviews" />
-          </ListItem>
-          <ListItem button onClick={() => navigate("/admin")}>
-            <School sx={{ mr: 2 }} /> {/* Icon for Course Enrolled */}
-            <ListItemText primary="Course Enrolled" />
-          </ListItem>
-          <ListItem button onClick={() => navigate("/")}>
-            <ExitToApp sx={{ mr: 2 }} /> {/* Icon for Logout */}
+          {menu.map((m) => (
+            <ListItemButton
+              key={m.key}
+              selected={section === m.key}
+              onClick={() => setSection(m.key)}
+            >
+              <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}>{m.icon}</ListItemIcon>
+              <ListItemText primary={m.label} />
+            </ListItemButton>
+          ))}
+          <ListItemButton onClick={() => navigate("/")}>
+            <ListItemIcon sx={{ color: "#fff", minWidth: 40 }}><ExitToApp /></ListItemIcon>
             <ListItemText primary="Logout" />
-          </ListItem>
+          </ListItemButton>
         </List>
       </Drawer>
-      <main style={{ flexGrow: 1, padding: "24px", marginLeft: drawerWidth }}>
+
+      <main style={{ flexGrow: 1, padding: 24 }}>
         <Toolbar />
-        <div>
-          <h2>Registered Users</h2>
-          <TableContainer component={Paper} style={{ marginBottom: "16px" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Course</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>JoelFranklin C</TableCell>
-                  <TableCell>joeljeyam22@gmail.com</TableCell>
-                  <TableCell>LAHTP ADVANCE</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>JoelFranklin C</TableCell>
-                  <TableCell>joeljeyam22@gmail.com</TableCell>
-                  <TableCell>LAHTP ADVANCE</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((user, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>PYTHON CLI APPLICATION ON LINUX</TableCell>
+        {section === "users" && (
+          <>
+            <h2>Registered Users</h2>
+            <TableContainer component={Paper} sx={{ mb: 2 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Username</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Course</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box
-            sx={{
-              mb: 2, // Margin bottom for spacing
-              py: 2,
-              px: 3,
-              textAlign: "center",
-              backgroundColor: "#1e88e5", // Primary color background
-              color: "#fff", // Text color
-              fontWeight: "bold",
-              borderRadius: "4px",
-            }}
-          >
-            Total Registered Users: {users.length}
-          </Box>
-        </div>
+                </TableHead>
+                <TableBody>
+                  {users.map((u, i) => (
+                    <TableRow key={i}>
+                      <TableCell>{u.username}</TableCell>
+                      <TableCell>{u.email}</TableCell>
+                      <TableCell>{u.course || "Not selected"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box sx={{ py: 2, px: 3, textAlign: "center", bgcolor: "#1e88e5", color: "#fff", fontWeight: "bold", borderRadius: 1 }}>
+              Total Registered Users: {users.length}
+            </Box>
+          </>
+        )}
+        {section === "feedback" && <StaticFeedbackReviews />}
+        {section === "courses" && (
+          <>
+            <h2>Course Enrolled</h2>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Course</TableCell>
+                    <TableCell>Students</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.entries(courseCounts).map(([c, n]) => (
+                    <TableRow key={c}>
+                      <TableCell>{c}</TableCell>
+                      <TableCell>{n}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        )}
       </main>
     </div>
   );

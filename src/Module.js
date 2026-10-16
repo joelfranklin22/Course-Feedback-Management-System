@@ -42,7 +42,7 @@ const Main = () => {
     if (currentVideoIndex < videos.length - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
     } else {
-      navigate("/student_feedback"); // Navigate to the Student Feedback page
+      navigate("/Student_Feedback"); // Navigate to the Student Feedback page
     }
   };
 

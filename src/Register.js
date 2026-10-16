@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { registerUser } from "./actions";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, loginUser } from "./actions";
 import { Form, Button, Alert, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ course }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,13 +13,16 @@ const RegistrationForm = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const dispatch = useDispatch();
+  const users = useSelector((s) => s.users.users);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = {
       username: validateUsername(username),
-      email: validateEmail(email),
+      email:
+        validateEmail(email) ||
+        (users.some((u) => u.email === email) ? "This email is already registered" : ""),
       password: validatePassword(password),
     };
 
@@ -27,9 +30,10 @@ const RegistrationForm = () => {
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (!hasErrors) {
-      const user = { username, email };
+      const user = { username, email, password, course: course || "Not selected" };
 
       dispatch(registerUser(user));
+      dispatch(loginUser(user));
       setShowSuccess(true);
 
       setTimeout(() => {

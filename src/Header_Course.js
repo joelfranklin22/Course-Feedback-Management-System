@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { loginUser, logoutUser } from "./actions";
 import logo from "./Image/Logo-white.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const HeaderComponent = ({ showLogin }) => {
   const [show, setShow] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const navigate = useNavigate();
-  const users = useSelector((state) => state.users.users); // Accessing users array correctly
+  const users = useSelector((state) => state.users.users);
+  const currentUser = useSelector((state) => state.users.currentUser);
+  const isLoggedIn = !!currentUser;
+  const dispatch = useDispatch();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -24,20 +27,20 @@ const HeaderComponent = ({ showLogin }) => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (validateForm()) {
-      const user = users.find((user) => user.email === email);
-      if (user) {
-        setIsLoggedIn(true);
-        setShow(false);
-        alert("Logged in successfully!");
-      } else if (email.endsWith("@gmail.com")) {
-        navigate("/user");
-      }
-    } else {
-      setEmailError("Please register for a course to log in.");
-    }
-    if (email.endsWith("joel@admin.in")) {
+    if (!validateForm()) return;
+    // Demo admin credentials
+    if (email === "joel@admin.in" && password === "Admin1234") {
+      setShow(false);
       navigate("/admin");
+      return;
+    }
+    const user = users.find((u) => u.email === email && u.password === password);
+    if (user) {
+      dispatch(loginUser(user));
+      setShow(false);
+      navigate("/module");
+    } else {
+      setEmailError("Invalid email/password or not registered. Please register first.");
     }
   };
 
@@ -70,7 +73,7 @@ const HeaderComponent = ({ showLogin }) => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    dispatch(logoutUser());
     navigate("/");
   };
 
@@ -151,17 +154,17 @@ const HeaderComponent = ({ showLogin }) => {
               </Link>
             </li>
             <li className="register mx-2">
-              <Link to="/about" className="text-white">
+              <Link to="/#about" className="text-white">
                 About
               </Link>
             </li>
             <li className="course mx-2">
-              <Link to="/course" className="text-white">
+              <Link to="/#course" className="text-white">
                 Course
               </Link>
             </li>
             <li className="contact mx-2">
-              <Link to="/contact" className="text-white">
+              <Link to="/#contact" className="text-white">
                 Contact
               </Link>
             </li>

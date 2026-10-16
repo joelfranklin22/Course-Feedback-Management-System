@@ -42,7 +42,7 @@ body {
   margin-top: 490px;
   margin-right: 200px;
 }
-p {
+.quote p {
   position: relative;
   top: 500px;
   left: 30%;
