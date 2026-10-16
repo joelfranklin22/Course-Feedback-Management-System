@@ -129,8 +129,8 @@ const Header = () => {
             color: inherit;
           }
           a:hover {
-            text-decoration: underline; 
-          text-decoration-color: #ffcc00; 
+            text-decoration: underline;
+          text-decoration-color: #ffcc00;
           transition: text-decoration-color 0.3s ease;
           }
           .course-details-1, .course-details-2 {
@@ -250,7 +250,7 @@ const Header = () => {
           <Modal.Title>Register</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <RegistrationForm course="PYTHON CLI APPLICATION ON LINUX" />
+          <RegistrationForm course="PYTHON CLI APPLICATION ON LINUX" inModal />
         </Modal.Body>
       </Modal>
     </>

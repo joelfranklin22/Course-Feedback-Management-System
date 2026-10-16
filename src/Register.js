@@ -1,183 +1,194 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, loginUser } from "./actions";
-import { Form, Button, Alert, Container } from "react-bootstrap";
+import { Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import HeaderComponent from "./Header_Course";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const RegistrationForm = ({ course }) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+const css = `
+  .reg-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background: linear-gradient(135deg, #1e1e1e 0%, #333 100%);
+  }
+  .reg-card {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  .reg-card.in-modal {
+    max-width: 100%;
+    box-shadow: none;
+    padding: 4px 8px;
+  }
+  .reg-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; text-align: center; }
+  .reg-sub { text-align: center; color: #6c757d; margin-bottom: 24px; font-size: 0.95rem; }
+  .reg-card .form-label { font-weight: 600; margin-bottom: 4px; }
+  .reg-hint { font-size: 0.8rem; color: #6c757d; margin-top: 4px; }
+  .reg-actions { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .reg-actions .btn { padding: 10px; font-weight: 600; }
+`;
+
+const RegistrationForm = ({ course, inModal = false }) => {
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const dispatch = useDispatch();
-  const users = useSelector((s) => s.users.users);
   const navigate = useNavigate();
+  const users = useSelector((s) => s.users.users);
+
+  const validators = {
+    username: (v) => {
+      if (!v.trim()) return "Username is required";
+      if (!usernameRegex.test(v)) return "3-20 letters or numbers only";
+      return "";
+    },
+    email: (v) => {
+      if (!v.trim()) return "Email is required";
+      if (!emailRegex.test(v)) return "Email address is invalid";
+      if (users.some((u) => u.email === v))
+        return "This email is already registered";
+      return "";
+    },
+    password: (v) => {
+      if (!v.trim()) return "Password is required";
+      if (!passwordRegex.test(v))
+        return "Min 8 chars with uppercase, lowercase, number and special character";
+      return "";
+    },
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    setErrors((er) => ({ ...er, [name]: validators[name](value) }));
+  };
+
+  const handleReset = () => {
+    setForm({ username: "", email: "", password: "" });
+    setErrors({});
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newErrors = {
-      username: validateUsername(username),
-      email:
-        validateEmail(email) ||
-        (users.some((u) => u.email === email) ? "This email is already registered" : ""),
-      password: validatePassword(password),
+      username: validators.username(form.username),
+      email: validators.email(form.email),
+      password: validators.password(form.password),
     };
-
     setErrors(newErrors);
+    if (Object.values(newErrors).some(Boolean)) return;
 
-    const hasErrors = Object.values(newErrors).some((error) => error !== "");
-    if (!hasErrors) {
-      const user = { username, email, password, course: course || "Not selected" };
-
-      dispatch(registerUser(user));
-      dispatch(loginUser(user));
-      setShowSuccess(true);
-
-      setTimeout(() => {
-        navigate("/module");
-        setShowSuccess(false);
-      }, 1000);
-
-      handleReset();
-    }
+    const user = { ...form, course: course || "Not selected" };
+    dispatch(registerUser(user));
+    dispatch(loginUser(user));
+    setShowSuccess(true);
+    handleReset();
+    setTimeout(() => navigate("/module"), 1000);
   };
 
-  const validateUsername = (value) => {
-    const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
-    if (!value.trim()) return "Username is required";
-    if (!usernameRegex.test(value))
-      return "Username must be 3-20 characters long and contain only alphanumeric characters";
-    return "";
-  };
+  const field = (name, label, type, placeholder) => (
+    <Form.Group className="mb-3" controlId={`reg-${name}`}>
+      <Form.Label>{label}</Form.Label>
+      <Form.Control
+        type={type}
+        name={name}
+        value={form[name]}
+        onChange={handleChange}
+        placeholder={placeholder}
+        isInvalid={!!errors[name]}
+        autoComplete="off"
+      />
+      <Form.Control.Feedback type="invalid">
+        {errors[name]}
+      </Form.Control.Feedback>
+    </Form.Group>
+  );
 
-  const validateEmail = (value) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!value.trim()) return "Email is required";
-    if (!emailRegex.test(value)) return "Email address is invalid";
-    return "";
-  };
+  const card = (
+    <div className={`reg-card ${inModal ? "in-modal" : ""}`}>
+      <style>{css}</style>
+      <h2 className="reg-title">Create your account</h2>
+      <p className="reg-sub">
+        {course ? `Enrolling in ${course}` : "Register to start learning"}
+      </p>
 
-  const validatePassword = (value) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    if (!value.trim()) return "Password is required";
-    if (!passwordRegex.test(value))
-      return "Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character";
-    return "";
-  };
+      {showSuccess && (
+        <Alert variant="success" className="py-2">
+          Registration successful! Redirecting...
+        </Alert>
+      )}
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    switch (name) {
-      case "username":
-        setUsername(value);
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          username: validateUsername(value),
-        }));
-        break;
-      case "email":
-        setEmail(value);
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: validateEmail(value),
-        }));
-        break;
-      case "password":
-        setPassword(value);
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: validatePassword(value),
-        }));
-        break;
-      default:
-        break;
-    }
-  };
+      <Form onSubmit={handleSubmit} noValidate>
+        {field("username", "Username", "text", "e.g. joel123")}
+        {field("email", "Email", "email", "you@example.com")}
 
-  const handleReset = () => {
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setErrors({});
-  };
-
-  return (
-    <Container>
-      <div
-        className="form-container"
-        style={{
-          maxHeight: "600px",
-          overflowY: "auto",
-          padding: "1rem",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <Form onSubmit={handleSubmit}>
-          {showSuccess && (
-            <Alert
-              variant="success"
-              onClose={() => setShowSuccess(false)}
-              dismissible
-            >
-              Registration successful!
-            </Alert>
-          )}
-          <Form.Group controlId="formUsername">
-            <Form.Label>Username</Form.Label>
+        <Form.Group className="mb-1" controlId="reg-password">
+          <Form.Label>Password</Form.Label>
+          <InputGroup hasValidation>
             <Form.Control
-              type="text"
-              name="username"
-              value={username}
-              onChange={handleInputChange}
-              isInvalid={!!errors.username}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group controlId="formEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={email}
-              onChange={handleInputChange}
-              isInvalid={!!errors.email}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.email}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group controlId="formPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
-              value={password}
-              onChange={handleInputChange}
+              value={form.password}
+              onChange={handleChange}
+              placeholder="Create a strong password"
               isInvalid={!!errors.password}
+              autoComplete="new-password"
             />
+            <Button
+              variant="outline-secondary"
+              onClick={() => setShowPassword((s) => !s)}
+              type="button"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </Button>
             <Form.Control.Feedback type="invalid">
               {errors.password}
             </Form.Control.Feedback>
-          </Form.Group>
+          </InputGroup>
+          {!errors.password && (
+            <div className="reg-hint">
+              8+ characters, with uppercase, number and special character.
+            </div>
+          )}
+        </Form.Group>
 
-          <div className="mt-3 d-flex justify-content-between">
-            <Button type="submit">Register</Button>
-            <Button variant="secondary" onClick={handleReset}>
-              Reset
-            </Button>
-          </div>
-        </Form>
-      </div>
-    </Container>
+        <div className="reg-actions">
+          <Button type="submit" variant="primary">
+            Register
+          </Button>
+          <Button
+            type="button"
+            variant="outline-secondary"
+            onClick={handleReset}
+          >
+            Reset
+          </Button>
+        </div>
+      </Form>
+    </div>
+  );
+
+  if (inModal) return card;
+
+  return (
+    <>
+      <HeaderComponent showLogin={false} />
+      <div className="reg-page">{card}</div>
+    </>
   );
 };
 
