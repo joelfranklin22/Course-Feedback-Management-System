@@ -66,7 +66,7 @@ const Main = () => {
           <Card
             style={{
               marginTop: "30px",
-              padding: "50px 30px",
+              padding: "clamp(16px, 4vw, 50px) clamp(12px, 3vw, 30px)",
               borderRadius: "8px",
               boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.1)",
               backgroundColor: "#1e1e1e",
@@ -83,28 +83,37 @@ const Main = () => {
               >
                 {videos[currentVideoIndex].title}
               </Card.Title>
-              <Card.Text
+              <div
                 style={{
-                  color: "white",
-                  position: "absolute",
-                  top: "30%",
-                  left: "60%",
-                  maxWidth: "500px",
-                  textAlign: "justify",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "24px",
+                  alignItems: "flex-start",
                 }}
               >
-                {`  ${videos[currentVideoIndex].content}`}
-              </Card.Text>
-              <video
-                controls
-                src={videos[currentVideoIndex].src}
-                width="700px"
-                style={{
-                  marginLeft: "-10px",
-                  display: "block",
-                  boxShadow: "0px 0px 2px 2px white",
-                }}
-              />
+                <video
+                  controls
+                  src={videos[currentVideoIndex].src}
+                  style={{
+                    flex: "1 1 320px",
+                    minWidth: 0,
+                    width: "100%",
+                    maxWidth: "700px",
+                    display: "block",
+                    boxShadow: "0px 0px 2px 2px white",
+                  }}
+                />
+                <Card.Text
+                  style={{
+                    color: "white",
+                    flex: "1 1 260px",
+                    maxWidth: "500px",
+                    textAlign: "justify",
+                  }}
+                >
+                  {`  ${videos[currentVideoIndex].content}`}
+                </Card.Text>
+              </div>
               <div className="text-center" style={{ marginTop: "20px" }}>
                 <Button
                   onClick={handlePrevious}

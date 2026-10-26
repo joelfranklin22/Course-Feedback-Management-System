@@ -14,27 +14,30 @@ const CourseCard = ({ imgSrc, title, text, link }) => {
     overflow: "hidden",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     transition: "transform 0.2s",
-    height: "450px",
+    minHeight: "450px",
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
   };
 
   const cardImageStyle = {
     width: "100%",
     maxWidth: "300px",
     height: "190px",
+    objectFit: "contain",
     margin: "10px auto",
     display: "block",
   };
 
   const cardBodyStyle = {
-    position: "absolute",
-    top: "190px",
-    left: "50%",
-    transform: "translateX(-50%)",
     textAlign: "center",
     backgroundColor: "#f8f9fa",
     padding: "1rem",
     width: "90%",
+    margin: "0 auto",
     borderRadius: "8px",
+    flex: "1 1 auto",
   };
 
   const cardTitleStyle = {
@@ -53,12 +56,9 @@ const CourseCard = ({ imgSrc, title, text, link }) => {
   };
 
   const cardFooterStyle = {
-    position: "absolute",
-    bottom: "10px",
-    left: "50%",
-    transform: "translateX(-50%)",
     textAlign: "center",
     width: "90%",
+    margin: "0 auto",
     borderRadius: "8px",
     padding: "1rem",
   };
@@ -114,7 +114,7 @@ const Card = () => {
       <h1 className="text-center mb-4">Courses Offered</h1>
       <div className="row">
         {courses.map((course, index) => (
-          <div className="col-md-4 mb-4" key={index}>
+          <div className="col-12 col-md-6 col-lg-4 mb-4 d-flex" key={index}>
             <CourseCard
               imgSrc={course.imgSrc}
               title={course.title}

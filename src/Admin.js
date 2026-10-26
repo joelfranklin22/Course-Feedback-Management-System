@@ -18,6 +18,8 @@ import {
   TableRow,
   Paper,
   Box,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Home, Feedback, School, ExitToApp } from "@mui/icons-material";
@@ -62,6 +64,7 @@ const Admin = () => {
       <Drawer
         variant="permanent"
         sx={{
+          display: { xs: "none", md: "block" },
           width: drawerWidth,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
@@ -97,8 +100,24 @@ const Admin = () => {
         </List>
       </Drawer>
 
-      <main style={{ flexGrow: 1, padding: 24 }}>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, minWidth: 0, p: { xs: 1.5, md: 3 } }}
+      >
         <Toolbar />
+        <Box sx={{ display: { xs: "block", md: "none" }, mb: 2 }}>
+          <Tabs
+            value={section}
+            onChange={(e, v) => v === "logout" ? navigate("/") : setSection(v)}
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            {menu.map((m) => (
+              <Tab key={m.key} value={m.key} label={m.label} />
+            ))}
+            <Tab value="logout" label="Logout" />
+          </Tabs>
+        </Box>
         {section === "users" && (
           <>
             <h2>Registered Users</h2>
@@ -163,7 +182,7 @@ const Admin = () => {
             </TableContainer>
           </>
         )}
-      </main>
+      </Box>
     </div>
   );
 };

@@ -139,6 +139,20 @@ const HeaderComponent = ({ showLogin }) => {
             background-size: cover;
             background-position: center;
           }
+          @media (max-width: 768px) {
+            .nav {
+              flex-direction: column;
+              gap: 0.5rem;
+            }
+            .right {
+              flex-wrap: wrap;
+              justify-content: center;
+              padding: 0;
+            }
+            .right li {
+              margin: 0.2rem 0.5rem;
+            }
+          }
         `}
       </style>
       <header className="header-container bg-black">

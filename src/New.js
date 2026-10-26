@@ -111,7 +111,7 @@ const CourseFeedback = () => {
       <h2 className="text-center mb-5">Course Feedback</h2>
       <div className="row justify-content-center">
         {feedbacks.map((feedback, index) => (
-          <div className="col-md-4 mb-4 d-flex align-items-stretch" key={index}>
+          <div className="col-12 col-md-6 col-lg-4 mb-4 d-flex justify-content-center align-items-stretch" key={index}>
             <div className="card feedback-card text-center">
               <div className="card-body">
                 <img

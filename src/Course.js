@@ -156,6 +156,34 @@ const Header = () => {
             transform: translateY(-5px);
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
           }
+          .course-need, .things {
+            max-width: calc(100% - 2rem);
+          }
+          .course-need h2:after, .things h2:after {
+            max-width: 90%;
+          }
+          @media (max-width: 991px) {
+            .main-container {
+              width: auto;
+              height: auto;
+              margin: 0;
+              border-radius: 0;
+              background-color: #1e1e1e;
+            }
+            .topic-abt, .time-1, .currency-1, .media, .btn-1 {
+              position: static;
+            }
+            .topic-abt {
+              margin: 1rem 0;
+            }
+            .course-need, .things {
+              margin: 2rem auto;
+              padding: 1rem;
+            }
+            .course-need h2:after, .things h2:after {
+              width: 80%;
+            }
+          }
         `}
       </style>
       <div className="header-content">
